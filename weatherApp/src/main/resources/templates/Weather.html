@@ -14,14 +14,23 @@
                     <h2 class="text-center">Weather App</h2>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/weather}" method="get">
+                    <!-- Error message display -->
+                    <div th:if="${error}" class="alert alert-danger mb-3">
+                        <span th:text="${error}"></span>
+                    </div>
+
+                    <!-- Single form with validation -->
+                    <form th:action="@{/weather}" method="get" onsubmit="return validateForm()">
                         <div class="mb-3">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control" id="city" name="city" required>
+                            <label for="cityInput" class="form-label">City</label>
+                            <input type="text" class="form-control" id="cityInput" name="city" required
+                                   pattern="[a-zA-Z\u0080-\u024F\s-]+"
+                                   title="Please enter letters only (no numbers or special characters)">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Get Weather</button>
                     </form>
 
+                    <!-- Weather display section -->
                     <div th:if="${weather}" class="mt-4">
                         <h3 th:text="${weather.name}">City</h3>
                         <div th:each="w : ${weather.weather}">
@@ -40,5 +49,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    function validateForm() {
+        const city = document.getElementById('cityInput').value;
+        if (!/^[a-zA-Z\u0080-\u024F\s-]+$/.test(city)) {
+            alert('Please enter a valid city name (letters only)');
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.example.weatherApp.controller;
 
+import com.example.weatherApp.exception.CityNotFoundException;
 import com.example.weatherApp.service.WeatherService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,9 +17,16 @@ import org.springframework.web.bind.annotation.RequestParam;
         }
 
         @GetMapping("/weather")
-        public String getWeather(@RequestParam(required = false) String city, Model model) {
+        public String getWeather(
+                @RequestParam(required = false) String city,
+                Model model) {
+
             if (city != null && !city.isEmpty()) {
-                model.addAttribute("weather", weatherService.getWeather(city));
+                try {
+                    model.addAttribute("weather", weatherService.getWeather(city));
+                } catch (CityNotFoundException e) {
+                    model.addAttribute("error", e.getMessage());
+                }
             }
             return "weather";
         }
